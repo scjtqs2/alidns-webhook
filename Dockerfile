@@ -1,20 +1,15 @@
-FROM golang:1.17-alpine AS build_deps
+FROM golang:1.17-alpine AS build
 
-RUN apk add --no-cache git
+ADD . /workspace
 
 WORKDIR /workspace
 ENV GO111MODULE=on
+ENV GOPROXY=http://goproxy.cn
 
-COPY go.mod .
-COPY go.sum .
+RUN go mod tidy -compat=1.17
 
-RUN go mod download
 
-FROM build_deps AS build
-
-COPY . .
-
-RUN CGO_ENABLED=0 go build -o webhook -ldflags '-w -extldflags "-static"' .
+RUN CGO_ENABLED=0 go build -o webhook -ldflags '-s -w -extldflags "-static"' .
 
 FROM alpine:3.15
 
@@ -22,4 +17,4 @@ RUN apk add --no-cache ca-certificates
 
 COPY --from=build /workspace/webhook /usr/local/bin/webhook
 
-ENTRYPOINT ["webhook"]
+ENTRYPOINT ["/usr/local/bin/webhook"]
