@@ -1,12 +1,13 @@
-IMAGE_NAME := pragkent/alidns-webhook
+IMAGE_NAME := scjtqs/alidns-webhook
 IMAGE_TAG := $(shell cat VERSION)
 
 test:
 	go test -v .
 
 docker:
-	docker build -t $(IMAGE_NAME):$(IMAGE_TAG) .
+	docker buildx create --use --name myalidns
+	docker buildx build --no-cache --tag $(IMAGE_NAME):$(IMAGE_TAG)  --platform linux/amd64,linux/arm64 .
+	docker buildx rm myalidns
 
 release:
-	docker build -t $(IMAGE_NAME):$(IMAGE_TAG) .
-	docker push $(IMAGE_NAME):$(IMAGE_TAG)
+	docker buildx build --no-cache --tag $(IMAGE_NAME):$(IMAGE_TAG)   --platform linux/amd64,linux/arm64 --push .

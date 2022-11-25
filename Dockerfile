@@ -1,4 +1,4 @@
-FROM golang:1.17-alpine AS build
+FROM golang:1.19-alpine3.15 AS build
 
 ADD . /workspace
 
@@ -6,7 +6,7 @@ WORKDIR /workspace
 ENV GO111MODULE=on
 ENV GOPROXY=http://goproxy.cn
 
-RUN go mod tidy -compat=1.17
+RUN go mod tidy
 
 
 RUN CGO_ENABLED=0 go build -o webhook -ldflags '-s -w -extldflags "-static"' .

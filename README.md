@@ -7,7 +7,7 @@ Cert-manager ACME DNS webhook provider for alidns.
 ### Install cert manager
 Please find document here: https://cert-manager.io/docs/installation/kubernetes/
 
-### Install webhook (Cert manager v0.11 and above)
+### Install webhook (Cert manager v1.7 and above)
 1. Install alidns-webhook
 
   ```bash
@@ -30,18 +30,18 @@ Please find document here: https://cert-manager.io/docs/installation/kubernetes/
 
 3. Example Issuer
   ```yaml
-  apiVersion: cert-manager.io/v1alpha2
-  kind: ClusterIssuer
-  metadata:
-    name: letsencrypt-staging
-  spec:
-    acme:
-      # Change to your letsencrypt email
-      email: certmaster@example.com
-      server: https://acme-staging-v02.api.letsencrypt.org/directory
-      privateKeySecretRef:
-        name: letsencrypt-staging-account-key
-      solvers:
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: alidns
+spec:
+  acme:
+    # Change to your letsencrypt email
+    email: certmaster@example.com
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: alidns-account-key
+    solvers:
       - dns01:
           webhook:
             groupName: acme.yourcompany.com
@@ -58,7 +58,7 @@ Please find document here: https://cert-manager.io/docs/installation/kubernetes/
 
 4. Issue a certificate
 ```yaml
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: example-tls
